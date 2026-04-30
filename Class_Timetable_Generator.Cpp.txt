@@ -1,0 +1,91 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int main() {
+    int days = 5;
+    int periods = 6;
+    int subjects;
+
+    cout << "===== Smart Class Timetable Generator =====" << endl;
+    cout << "Enter number of subjects: ";
+    cin >> subjects;
+    cin.ignore();
+
+    vector<string> subjectNames(subjects);
+    vector<string> facultyNames(subjects);
+    vector<string> roomNames(subjects);
+    vector<int> subjectHours(subjects);
+
+    for (int i = 0; i < subjects; i++) {
+        cout << "\nEnter subject name " << i + 1 << ": ";
+        getline(cin, subjectNames[i]);
+
+        cout << "Enter faculty name for " << subjectNames[i] << ": ";
+        getline(cin, facultyNames[i]);
+
+        cout << "Enter room name for " << subjectNames[i] << ": ";
+        getline(cin, roomNames[i]);
+
+        cout << "Enter required periods per week for " << subjectNames[i] << ": ";
+        cin >> subjectHours[i];
+        cin.ignore();
+    }
+
+    vector<vector<string>> timetable(days, vector<string>(periods, "Free"));
+
+    string dayNames[5] = {
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+    };
+
+    int currentSubject = 0;
+
+    for (int i = 0; i < days; i++) {
+        for (int j = 0; j < periods; j++) {
+            if (j == 3) {
+                timetable[i][j] = "Lunch Break";
+                continue;
+            }
+
+            int attempts = 0;
+
+            while (attempts < subjects) {
+                if (subjectHours[currentSubject] > 0) {
+                    timetable[i][j] =
+                        subjectNames[currentSubject] + " | " +
+                        facultyNames[currentSubject] + " | " +
+                        roomNames[currentSubject];
+
+                    subjectHours[currentSubject]--;
+                    currentSubject = (currentSubject + 1) % subjects;
+                    break;
+                }
+
+                currentSubject = (currentSubject + 1) % subjects;
+                attempts++;
+            }
+        }
+    }
+
+    cout << "\n===== Generated Smart Class Timetable =====\n" << endl;
+
+    for (int i = 0; i < days; i++) {
+        cout << dayNames[i] << ":" << endl;
+
+        for (int j = 0; j < periods; j++) {
+            cout << "Period " << j + 1 << " -> " << timetable[i][j] << endl;
+        }
+
+        cout << endl;
+    }
+
+    cout << "Timetable generated successfully using Greedy Algorithm!" << endl;
+
+    return 0;
+}
